@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from model import ObjectDetectionModel
+from PIL import Image
+from io import BytesIO
 
 app = FastAPI()
 
@@ -15,10 +17,11 @@ async def say_hello(name: str):
 
 
 @app.post("/predict")
-def predict():
+async def predict(file: UploadFile):
+    contents = await file.read()
+    image = Image.open(BytesIO(contents)).convert("RGB")
     model = ObjectDetectionModel()
-    response = model.predict("c3928afa-BZ1A0675.jpg")
-    print(response)
+    response = model.predict(image)
     return {"message": "Prediction done"}
 
 
