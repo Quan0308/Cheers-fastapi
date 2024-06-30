@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from object_detection_model import ObjectDetectionModel
 from multilabel_classification_model import MultilabelClassificationModel
+from data_class.multilabel import MultilabelObject as Mul
 from utils import response_helper
 from PIL import Image
 from io import BytesIO
@@ -45,15 +46,15 @@ async def predict(link: ImageLink):
     obj_detection_model = ObjectDetectionModel()
     multilabel_classification_model = MultilabelClassificationModel()
     detection_objects = obj_detection_model.predict(image)
-    res: list = []
+    res: Mul = []
 
     for obj in detection_objects:
         data = multilabel_classification_model.predict(obj)
         res.append(data)
     
-    res = response_helper.ResponseHelper.create_response(res)
+    space_res = multilabel_classification_model.predict_space(image)
 
-    return {"message": "Prediction done", "data": res}
+    return {"message": "Prediction done", "data": response_helper.ResponseHelper.create_response(res, space_res)}
 
 
 if __name__ == "__main__":

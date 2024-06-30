@@ -3,6 +3,7 @@ from tensorflow.keras.preprocessing import image
 
 from data_class.detected_object import DetectedObject
 from data_class.multilabel import MultilabelObject
+from PIL import Image
 import numpy as np
 
 class MultilabelClassificationModel:
@@ -30,18 +31,30 @@ class MultilabelClassificationModel:
 
         
         predictions = self.model.predict(images)
-        space_predictions = self.space_model.predict(images)
 
         first_key = list(predictions.keys())[0]
-        space_first_key = list(space_predictions.keys())[0]
 
         predictions = predictions[first_key][0]
-        space_predictions = space_predictions[space_first_key][0]
        
         return MultilabelObject(
             position=detected_objects.position,
             type=detected_objects.type, 
             value=detected_objects.value, 
             brands={ self.classes[j]: str(predictions[j]) for j in range(len(predictions)) if predictions[j] > 0.01 },
-            spaces={ self.space_classes[j]: str(space_predictions[j]) for j in range(len(space_predictions)) if space_predictions[j] > 0.01 }
         )
+    
+    def predict_space(self, data_img: Image):
+        data_img = data_img.resize((224, 224))
+
+        X = image.img_to_array(data_img)
+        X = np.expand_dims(X, axis=0)
+        images = np.vstack([X])
+
+        
+        predictions = self.space_model.predict(images)
+
+        first_key = list(predictions.keys())[0]
+
+        predictions = predictions[first_key][0]
+       
+        return { self.space_classes[j]: str(predictions[j]) for j in range(len(predictions)) if predictions[j] > 0.01 }
