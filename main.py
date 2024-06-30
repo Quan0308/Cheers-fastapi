@@ -1,5 +1,7 @@
 from fastapi import FastAPI, UploadFile
-from model import ObjectDetectionModel
+from object_detection_model import ObjectDetectionModel
+from multilabel_classification_model import MultilabelClassificationModel
+from utils import response_helper
 from PIL import Image
 from io import BytesIO
 
@@ -20,9 +22,18 @@ async def say_hello(name: str):
 async def predict(file: UploadFile):
     contents = await file.read()
     image = Image.open(BytesIO(contents)).convert("RGB")
-    model = ObjectDetectionModel()
-    response = model.predict(image)
-    return {"message": "Prediction done"}
+    obj_detection_model = ObjectDetectionModel()
+    multilabel_classification_model = MultilabelClassificationModel()
+    detection_objects = obj_detection_model.predict(image)
+    res: list = []
+
+    for obj in detection_objects:
+        data = multilabel_classification_model.predict(obj)
+        res.append(data)
+    
+    res = response_helper.ResponseHelper.create_response(res)
+
+    return {"message": "Prediction done", "data": res}
 
 
 if __name__ == "__main__":

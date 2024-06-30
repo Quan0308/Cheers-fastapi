@@ -6,4 +6,5 @@ from .postition import Position
 class DetectedObject:
     position: Position
     type: str
+    value: float
     image: Image.Image
