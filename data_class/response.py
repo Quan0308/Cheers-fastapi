@@ -7,4 +7,4 @@ from .drinker import Drinker
 class Response:
     products: list[Product]
     staffs: list[Staff]
-    drinker: list[Drinker]
+    drinkers: list[Drinker]
