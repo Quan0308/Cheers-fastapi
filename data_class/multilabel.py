@@ -6,3 +6,4 @@ class MultilabelObject:
     type: str
     value: float
     brands: object
+    spaces: object

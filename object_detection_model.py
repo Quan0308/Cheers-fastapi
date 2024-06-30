@@ -27,9 +27,7 @@ class ObjectDetectionModel:
     
     def predict_response(self, boxes: list, classes: list, confs: list, names: list, image: Image) -> List[DetectedObject]:
         res = []
-        print("confs", confs)
         for i, (box, class_index) in enumerate(zip(boxes, classes)):
-            print("class_index", class_index)
             x1, y1, x2, y2 = box
             res.append(DetectedObject(
             position=Position(x1, y1, x2, y2),

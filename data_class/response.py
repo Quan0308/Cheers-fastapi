@@ -8,3 +8,4 @@ class Response:
     products: list[Product]
     staffs: list[Staff]
     drinkers: list[Drinker]
+    spaces: object

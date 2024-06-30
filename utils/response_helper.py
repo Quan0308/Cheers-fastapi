@@ -5,7 +5,7 @@ from data_class.drinker import Drinker
 class ResponseHelper:
     @staticmethod
     def create_response(data: list[MO]) -> Response:
-        res = Response(products=[], staffs=[], drinkers=[])
+        res = Response(products=[], staffs=[], drinkers=[], spaces=None)
         for d in data:
             if(d.type == 'staff'):
                 staff = Staff(position=d.position, value=d.value)
@@ -15,4 +15,7 @@ class ResponseHelper:
                 res.drinkers.append(drinker)
             else:
                 res.products.append(d)
+        
+        if(d.spaces is not None):
+            res.spaces = d.spaces
         return res
