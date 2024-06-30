@@ -4,6 +4,9 @@ from multilabel_classification_model import MultilabelClassificationModel
 from utils import response_helper
 from PIL import Image
 from io import BytesIO
+from pydantic import BaseModel
+
+import requests
 
 app = FastAPI()
 
@@ -18,10 +21,14 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
+class ImageLink(BaseModel):
+    link: str
+
 @app.post("/predict")
-async def predict(file: UploadFile):
-    contents = await file.read()
-    image = Image.open(BytesIO(contents)).convert("RGB")
+async def predict(link: ImageLink):
+    link = link.link
+    response = requests.get(link)
+    image = Image.open(BytesIO(response.content)).convert("RGB")
     obj_detection_model = ObjectDetectionModel()
     multilabel_classification_model = MultilabelClassificationModel()
     detection_objects = obj_detection_model.predict(image)
