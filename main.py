@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from object_detection_model import ObjectDetectionModel
 from multilabel_classification_model import MultilabelClassificationModel
 from utils import response_helper
@@ -10,6 +11,18 @@ import requests
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",  # Allow requests from this origin
+    # Add more origins here
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
